@@ -1,0 +1,11 @@
+.xlsx
+*.env
+/.idea
+__pycache__/
+/.venv
+/results
+/archive
+
+*.bat
+auto_download_OP3M_report.bat
+/utils/consts/consts.py

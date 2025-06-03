@@ -1,0 +1,8 @@
+@echo off
+@chcp 1251
+
+REM активируем виртулаьное окружение
+call "...\.venv\Scripts\activate"
+
+REM запускаем прогу
+python "...\main.py"
