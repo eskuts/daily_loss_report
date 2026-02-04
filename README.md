@@ -1,14 +1,23 @@
-# Отчёт: Ежедневные потери + Отчётная ведомость
+# Logistics Reporting Automation (ETL Pipeline)
 
-Этот репозиторий содержит 4 модуля:
+I built this project to solve a massive manual workload issue in our transport department. We were spending about 5 hours every morning just to collect data and format reports. This tool automates the whole flow, cutting the time down to about 70 minutes.
 
-1. `data_extractor` – автоматическая выгрузка (кликер) из ТрансНавигации (программа для мониторинга выполнения транспортной работы автобусного парка)
-2. `plan_fact` – подсчитывается отчёт план-факт и выгружается в гугл таблицу  (использует данные из `data_extractor`)
-3. `colon_report` – генерация отчёта для начальников колонн (использует данные из `plan_fact`)
-4. `damage_calculator` – расчёт ущерба (для % от общих потерь использует данные из `plan_fact`)
+### The Problem
+The main challenge was that the source software (TransNavigation) didn't have an API. I had to build a custom extractor that simulates user actions to get the raw data. Also, the data was messy and came from different sources (fleet monitoring, financial logs, and manual spreadsheets).
 
-## Порядок выполнения:
-1. в 8:00 запускается `data_extractor`
-2. в 8:30 запускается `plan_fact` 
-3. сразу после запускается `colon_report`
-4. в 9:10 запускается `damage_calculator`
+### How it works
+The system is divided into 4 Python modules that run sequentially:
+
+1. **data_extractor**: A Selenium-based automation script that logs into TransNavigation and pulls raw performance data.
+2. **plan_fact**: This is the core module. It cleans the raw data, calculates the "Plan vs Actual" metrics using Pandas, and pushes everything to a Google Sheet so the management can see it immediately.
+3. **colon_report**: Takes the processed data and breaks it down into specific views for different column supervisors.
+4. **damage_calculator**: A small module I added to handle financial penalties. It calculates damage percentages based on the losses identified in the plan-fact report.
+
+### Tech choices
+* **Python (Pandas/NumPy):** For all data transformations.
+* **Selenium:** To bypass the lack of an API in our monitoring software.
+* **Google Sheets API:** Chosen as the final UI because it was the easiest way for non-technical staff to access the data.
+* **Logging & .env:** I used standard logging and environment variables to make the scripts easier to debug and more secure.
+
+### Result
+It's been running daily since I deployed it. We've reached 100% data consistency because I removed the human factor from the data entry stage. For the company, it's a saving of ~20 man-hours per week.
